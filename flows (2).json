@@ -1,0 +1,239 @@
+[
+    {
+        "id": "tab_tugas10",
+        "type": "tab",
+        "label": "Tugas 10 - 2410010475",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "mqtt_in_suhu_nim",
+        "type": "mqtt in",
+        "z": "tab_tugas10",
+        "name": "Sensor Suhu DHT22",
+        "topic": "iot/2410010475/sensor/suhu",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "mqtt_broker_tugas",
+        "inputs": 0,
+        "x": 180,
+        "y": 100,
+        "wires": [
+            [
+                "fn_parse_suhu_nim"
+            ]
+        ]
+    },
+    {
+        "id": "fn_parse_suhu_nim",
+        "type": "function",
+        "z": "tab_tugas10",
+        "name": "Parse Float",
+        "func": "msg.payload = parseFloat(msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "x": 390,
+        "y": 100,
+        "wires": [
+            [
+                "ui_gauge_suhu_nim"
+            ]
+        ]
+    },
+    {
+        "id": "ui_gauge_suhu_nim",
+        "type": "ui_gauge",
+        "z": "tab_tugas10",
+        "name": "Gauge Suhu",
+        "group": "grp_monitoring_nim",
+        "order": 1,
+        "width": "6",
+        "height": "4",
+        "gtype": "gage",
+        "title": "Suhu DHT22 (°C)",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 50,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 600,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "ui_switch_relay_nim",
+        "type": "ui_switch",
+        "z": "tab_tugas10",
+        "name": "Kontrol Relay (GPIO 26)",
+        "label": "Relay (GPIO 26)",
+        "tooltip": "ON/OFF Relay",
+        "group": "grp_kontrol_nim",
+        "order": 1,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "decouple": "false",
+        "topic": "iot/2410010475/aktuator/relay",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "ON",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "OFF",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "x": 190,
+        "y": 180,
+        "wires": [
+            [
+                "mqtt_out_relay_nim"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_out_relay_nim",
+        "type": "mqtt out",
+        "z": "tab_tugas10",
+        "name": "Publish Relay",
+        "topic": "",
+        "qos": "0",
+        "retain": "false",
+        "broker": "mqtt_broker_tugas",
+        "x": 440,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "ui_slider_pwm_nim",
+        "type": "ui_slider",
+        "z": "tab_tugas10",
+        "name": "Slider PWM (GPIO 23)",
+        "label": "Kecerahan LED (PWM)",
+        "tooltip": "Atur PWM 0-255",
+        "group": "grp_kontrol_nim",
+        "order": 2,
+        "width": "6",
+        "height": "1",
+        "passthru": true,
+        "outs": "end",
+        "topic": "iot/2410010475/aktuator/pwm",
+        "topicType": "str",
+        "min": 0,
+        "max": "255",
+        "step": 1,
+        "x": 190,
+        "y": 260,
+        "wires": [
+            [
+                "mqtt_out_pwm_nim"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_out_pwm_nim",
+        "type": "mqtt out",
+        "z": "tab_tugas10",
+        "name": "Publish PWM",
+        "topic": "",
+        "qos": "0",
+        "retain": "false",
+        "broker": "mqtt_broker_tugas",
+        "x": 440,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "mqtt_in_status_nim",
+        "type": "mqtt in",
+        "z": "tab_tugas10",
+        "name": "Feedback Relay",
+        "topic": "iot/2410010475/status/relay",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "mqtt_broker_tugas",
+        "inputs": 0,
+        "x": 180,
+        "y": 340,
+        "wires": [
+            [
+                "ui_text_status_nim"
+            ]
+        ]
+    },
+    {
+        "id": "ui_text_status_nim",
+        "type": "ui_text",
+        "z": "tab_tugas10",
+        "group": "grp_kontrol_nim",
+        "order": 3,
+        "width": "6",
+        "height": "1",
+        "name": "Status Relay",
+        "label": "Status Aktual Relay",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 430,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "mqtt_broker_tugas",
+        "type": "mqtt-broker",
+        "name": "Mosquitto Lokal",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "NodeRED-2410010475",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true
+    },
+    {
+        "id": "grp_monitoring_nim",
+        "type": "ui_group",
+        "z": "tab_tugas10",
+        "name": "Monitoring Sensor",
+        "tab": "tab_dashboard_nim",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "grp_kontrol_nim",
+        "type": "ui_group",
+        "z": "tab_tugas10",
+        "name": "Kontrol Aktuator",
+        "tab": "tab_dashboard_nim",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "tab_dashboard_nim",
+        "type": "ui_tab",
+        "z": "tab_tugas10",
+        "name": "Dashboard IoT - 2410010475",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "0c71e3d3189e592a",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]
